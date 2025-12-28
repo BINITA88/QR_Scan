@@ -3,66 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Restaurant QR Menu</title>
-  <meta http-equiv="refresh" content="0;url=https://qr-scan-livid.vercel.app/">
+  <title>Recipe Menu</title>
   <link rel="stylesheet" href="styles.css">
-  <script>
-    window.location.replace("https://qr-scan-livid.vercel.app/");
-  </script>
 </head>
-<body class="home">
-  <div class="bg-grid"></div>
-  <header class="topbar">
-    <div class="brand">Saffron Table</div>
-    <a class="ghost-link" href="https://qr-scan-livid.vercel.app/">Open menu</a>
-  </header>
-  <main class="layout">
-    <section class="hero card">
-      <h1>Printable QR for your recipe menu</h1>
-      <p>Generate a QR code that opens your menu page. Print it and place it anywhere.</p>
-      <div class="field">
-        <label for="menuUrl">Menu URL</label>
-        <div class="input-row">
-          <input id="menuUrl" type="url" placeholder="https://qr-scan-livid.vercel.app/">
-          <button id="useLocal" type="button">Use this folder</button>
-        </div>
-        <small id="urlHint">Tip: host this folder and paste the public menu URL.</small>
-      </div>
-      <div class="qr-panel">
-        <div class="qr-frame">
-          <img id="qrImage" alt="QR code for menu">
-        </div>
-        <div class="qr-actions">
-          <button id="copyUrl" type="button">Copy URL</button>
-          <button id="printQr" type="button">Print QR</button>
-        </div>
-        <div class="qr-link" id="qrLink"></div>
-      </div>
-    </section>
-    <section class="scan card">
-      <h2>Scan and open the menu</h2>
-      <p>Use your camera to scan a printed QR. Works in modern Chrome and Edge.</p>
-      <div class="scan-actions">
-        <button id="startScan" type="button">Start scanner</button>
-        <button id="stopScan" type="button" disabled>Stop scanner</button>
-      </div>
-      <div class="scan-grid">
-        <video id="video" muted playsinline></video>
-        <div class="scan-box">
-          <div class="scan-status" id="scanStatus">Scanner idle.</div>
-          <div class="scan-result" id="scanResult">No code yet.</div>
-          <a class="scan-link" id="scanLink" href="#" target="_blank" rel="noreferrer">Open scanned link</a>
-          <label class="file-scan">
-            Scan from image
-            <input id="fileScan" type="file" accept="image/*">
-          </label>
-        </div>
-      </div>
+<body class="menu">
+  <main class="layout pdf-layout">
+    <section class="pdf-card">
+      <object class="pdf-frame" data="pdf/menu-final.pdf#toolbar=0&navpanes=0&scrollbar=0&view=FitH" type="application/pdf">
+        <p>Your browser does not support PDF viewing. <a href="pdf/menu-final.pdf">Open the menu PDF</a>.</p>
+      </object>
     </section>
   </main>
-  <footer class="footer">
-    <span>Print-friendly QR for tables and takeout bags.</span>
-  </footer>
-  <script src="app.js"></script>
 </body>
 </html>
