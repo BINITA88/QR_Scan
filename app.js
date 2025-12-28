@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
   const menuUrlInput = document.getElementById("menuUrl");
   const qrImage = document.getElementById("qrImage");
   const qrLink = document.getElementById("qrLink");
@@ -19,7 +19,7 @@
   let stream = null;
   let detector = null;
 
-  const fallbackMenuUrl = "http://192.168.18.47:5500/menu.html";
+  const fallbackMenuUrl = "https://qr-scan-livid.vercel.app/";
 
   const buildLocalUrl = () => {
     try {
@@ -237,5 +237,5 @@
     }
   });
 
-  setMenuUrl(buildLocalUrl());
+  setMenuUrl(fallbackMenuUrl);
 })();

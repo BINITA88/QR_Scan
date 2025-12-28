@@ -1,16 +1,20 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Restaurant QR Menu</title>
+  <meta http-equiv="refresh" content="0;url=https://qr-scan-livid.vercel.app/">
   <link rel="stylesheet" href="styles.css">
+  <script>
+    window.location.replace("https://qr-scan-livid.vercel.app/");
+  </script>
 </head>
 <body class="home">
   <div class="bg-grid"></div>
   <header class="topbar">
     <div class="brand">Saffron Table</div>
-    <a class="ghost-link" href="menu.html">Open menu</a>
+    <a class="ghost-link" href="https://qr-scan-livid.vercel.app/">Open menu</a>
   </header>
   <main class="layout">
     <section class="hero card">
@@ -19,7 +23,7 @@
       <div class="field">
         <label for="menuUrl">Menu URL</label>
         <div class="input-row">
-          <input id="menuUrl" type="url" placeholder="https://your-domain.com/menu.html">
+          <input id="menuUrl" type="url" placeholder="https://qr-scan-livid.vercel.app/">
           <button id="useLocal" type="button">Use this folder</button>
         </div>
         <small id="urlHint">Tip: host this folder and paste the public menu URL.</small>
