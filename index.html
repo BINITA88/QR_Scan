@@ -5,14 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Nagomi-ya Sushi Menu (PDF)</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="app.js" defer></script>
+  <meta http-equiv="refresh" content="0; url=pdf/menu-final.pdf">
+  <script>
+    // Redirect immediately to the PDF; fallback link remains visible if blocked.
+    window.addEventListener("DOMContentLoaded", () => {
+      const pdfUrl = "pdf/menu-final.pdf";
+      try {
+        window.location.replace(pdfUrl);
+      } catch (e) {
+        // ignore and leave fallback link
+      }
+    });
+  </script>
 </head>
 <body class="menu">
   <main class="layout pdf-layout">
-    <section class="pdf-card">
-      <object class="pdf-frame" data="pdf/menu-final.pdf#toolbar=0&navpanes=0&scrollbar=0&view=FitH" type="application/pdf">
-        <p>Your browser does not support PDF viewing. <a href="pdf/menu-final.pdf">Open the menu PDF</a>.</p>
-      </object>
+    <section class="pdf-card" style="display:grid;place-items:center;text-align:center;padding:32px;">
+      <p style="margin:0 0 12px;font-size:18px;">Opening menu PDF…</p>
+      <p style="margin:0;font-size:16px;">If it doesn’t open automatically, <a href="pdf/menu-final.pdf">tap here</a>.</p>
     </section>
   </main>
 
