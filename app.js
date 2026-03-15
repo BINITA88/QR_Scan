@@ -1,241 +1,203 @@
-﻿(() => {
-  const menuUrlInput = document.getElementById("menuUrl");
-  const qrImage = document.getElementById("qrImage");
-  const qrLink = document.getElementById("qrLink");
-  const useLocal = document.getElementById("useLocal");
-  const copyUrl = document.getElementById("copyUrl");
-  const printQr = document.getElementById("printQr");
-  const menuLink = document.querySelector(".ghost-link");
+(() => {
+  const menuItems = [
+    {
+      title: "Yuzu Hamachi",
+      category: "Sashimi",
+      price: "$14",
+      description: "Yellowtail sashimi with yuzu soy, micro shiso, and citrus oil.",
+      image:
+        "https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=900&q=80",
+    },
+    {
+      title: "Nagomi Nigiri Set",
+      category: "Nigiri",
+      price: "$18",
+      description: "Chef selection of six seasonal nigiri with warm rice.",
+      image:
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
+    },
+    {
+      title: "Charcoal Miso Cod",
+      category: "Hot Plates",
+      price: "$16",
+      description: "Black cod glazed in white miso, served with pickled ginger.",
+      image:
+        "https://images.unsplash.com/photo-1553621042-7e89c0b73d4f?auto=format&fit=crop&w=900&q=80",
+    },
+    {
+      title: "Garden Tempura",
+      category: "Starters",
+      price: "$12",
+      description: "Crisp seasonal vegetables, tentsuyu, and smoked sea salt.",
+      image:
+        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80",
+    },
+    {
+      title: "Tokyo Sunset Roll",
+      category: "Rolls",
+      price: "$15",
+      description: "Spicy tuna, avocado, and torch-seared salmon.",
+      image:
+        "https://images.unsplash.com/photo-1553621042-8d7b1da6f0f5?auto=format&fit=crop&w=900&q=80",
+    },
+    {
+      title: "Shiso Cucumber Maki",
+      category: "Rolls",
+      price: "$9",
+      description: "Cucumber, shiso, and sesame wrapped in nori.",
+      image:
+        "https://images.unsplash.com/photo-1553621042-5c9cbf6ec6d7?auto=format&fit=crop&w=900&q=80",
+    },
+    {
+      title: "Matcha Mochi",
+      category: "Dessert",
+      price: "$8",
+      description: "Soft mochi filled with matcha cream and kinako dust.",
+      image:
+        "https://images.unsplash.com/photo-1505253213348-6fa7fcb4e963?auto=format&fit=crop&w=900&q=80",
+    },
+    {
+      title: "Kyoto Spritz",
+      category: "Drinks",
+      price: "$10",
+      description: "Yuzu soda, jasmine tea syrup, and sparkling citrus.",
+      image:
+        "https://images.unsplash.com/photo-1464306076886-da185f6a7803?auto=format&fit=crop&w=900&q=80",
+    },
+    {
+      title: "Truffle Uni Toast",
+      category: "Chef Specials",
+      price: "$19",
+      description: "Brioche toast, sea urchin, and white truffle oil.",
+      image:
+        "https://images.unsplash.com/photo-1473093226795-af9932fe5856?auto=format&fit=crop&w=900&q=80",
+    },
+    {
+      title: "Sesame Salmon Don",
+      category: "Rice Bowls",
+      price: "$17",
+      description: "Salmon sashimi over rice with sesame vinaigrette.",
+      image:
+        "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80",
+    },
+  ];
 
-  const startScan = document.getElementById("startScan");
-  const stopScan = document.getElementById("stopScan");
-  const video = document.getElementById("video");
-  const scanStatus = document.getElementById("scanStatus");
-  const scanResult = document.getElementById("scanResult");
-  const scanLink = document.getElementById("scanLink");
-  const fileScan = document.getElementById("fileScan");
+  const menuGrid = document.getElementById("menuGrid");
+  const categoryList = document.getElementById("categoryList");
+  const activeCategory = document.getElementById("activeCategory");
+  const menuToggle = document.getElementById("menuToggle");
+  const categoryToggle = document.getElementById("categoryToggle");
+  const closeSidebar = document.getElementById("closeSidebar");
+  const sidebar = document.getElementById("categorySidebar");
+  const overlay = document.getElementById("sidebarOverlay");
 
-  let scanTimer = null;
-  let stream = null;
-  let detector = null;
+  if (!menuGrid || !categoryList || !activeCategory) {
+    return;
+  }
 
-  const fallbackMenuUrl = "https://qr-scan-livid.vercel.app/";
+  const categories = ["All", ...new Set(menuItems.map((item) => item.category))];
+  let currentCategory = "All";
 
-  const buildLocalUrl = () => {
-    try {
-      const baseUrl = new URL("menu.html", window.location.href);
-      const host = baseUrl.hostname;
+  const renderCategories = () => {
+    categoryList.innerHTML = "";
 
-      if (host === "127.0.0.1" || host === "localhost") {
-        return fallbackMenuUrl;
+    categories.forEach((category) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "category-button";
+      button.textContent = category;
+      button.dataset.category = category;
+
+      if (category === currentCategory) {
+        button.classList.add("active");
       }
 
-      return baseUrl.toString();
-    } catch (err) {
-      return fallbackMenuUrl;
-    }
-  };
-
-  const isUrl = (value) => {
-    try {
-      new URL(value);
-      return true;
-    } catch (err) {
-      return false;
-    }
-  };
-
-  const updateQr = () => {
-    const input = menuUrlInput.value.trim();
-    const safeUrl = input || buildLocalUrl();
-
-    if (!safeUrl) {
-      qrImage.removeAttribute("src");
-      qrLink.textContent = "Add a menu URL to generate a QR.";
-      return;
-    }
-
-    const qrService = "https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=";
-    qrImage.src = qrService + encodeURIComponent(safeUrl);
-    qrLink.textContent = safeUrl;
-
-    if (menuLink) {
-      menuLink.href = safeUrl;
-    }
-  };
-
-  const setMenuUrl = (value) => {
-    menuUrlInput.value = value;
-    updateQr();
-  };
-
-  const setStatus = (text) => {
-    scanStatus.textContent = text;
-  };
-
-  const setResult = (text) => {
-    scanResult.textContent = text;
-  };
-
-  const setLink = (value) => {
-    if (value && isUrl(value)) {
-      scanLink.href = value;
-      scanLink.classList.add("show");
-    } else {
-      scanLink.href = "#";
-      scanLink.classList.remove("show");
-    }
-  };
-
-  const handleScan = (value) => {
-    setResult(value);
-    setLink(value);
-    setStatus("QR detected.");
-
-    if (isUrl(value)) {
-      window.open(value, "_blank", "noopener");
-    }
-  };
-
-  const stopScanner = () => {
-    if (scanTimer) {
-      clearTimeout(scanTimer);
-      scanTimer = null;
-    }
-
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      stream = null;
-    }
-
-    detector = null;
-    video.srcObject = null;
-    startScan.disabled = false;
-    stopScan.disabled = true;
-    setStatus("Scanner stopped.");
-  };
-
-  const scanFrame = async () => {
-    if (!detector) {
-      return;
-    }
-
-    if (!video.videoWidth) {
-      scanTimer = setTimeout(scanFrame, 250);
-      return;
-    }
-
-    let bitmap = null;
-
-    try {
-      bitmap = await createImageBitmap(video);
-      const codes = await detector.detect(bitmap);
-
-      if (codes.length > 0) {
-        handleScan(codes[0].rawValue || "");
-        stopScanner();
-        return;
-      }
-    } catch (err) {
-      setStatus("Scan error: " + err.message);
-      stopScanner();
-      return;
-    } finally {
-      if (bitmap && bitmap.close) {
-        bitmap.close();
-      }
-    }
-
-    scanTimer = setTimeout(scanFrame, 250);
-  };
-
-  useLocal.addEventListener("click", () => {
-    setMenuUrl(buildLocalUrl());
-  });
-
-  menuUrlInput.addEventListener("input", updateQr);
-
-  copyUrl.addEventListener("click", async () => {
-    const url = menuUrlInput.value.trim();
-
-    if (!url) {
-      setStatus("Add a menu URL first.");
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(url);
-      setStatus("Menu URL copied.");
-    } catch (err) {
-      setStatus("Copy failed. You can select and copy the URL.");
-    }
-  });
-
-  printQr.addEventListener("click", () => {
-    window.print();
-  });
-
-  startScan.addEventListener("click", async () => {
-    if (!("BarcodeDetector" in window)) {
-      setStatus("BarcodeDetector is not supported in this browser.");
-      return;
-    }
-
-    try {
-      detector = new BarcodeDetector({ formats: ["qr_code"] });
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-        audio: false,
+      button.addEventListener("click", () => {
+        currentCategory = category;
+        renderMenu(currentCategory);
+        updateActiveCategory();
+        updateActiveButtons();
+        closeMenu();
       });
 
-      video.srcObject = stream;
-      await video.play();
-      setStatus("Point the camera at a QR code.");
-      startScan.disabled = true;
-      stopScan.disabled = false;
-      scanFrame();
-    } catch (err) {
-      setStatus("Camera error: " + err.message);
-      stopScanner();
+      categoryList.appendChild(button);
+    });
+  };
+
+  const updateActiveButtons = () => {
+    const buttons = categoryList.querySelectorAll(".category-button");
+    buttons.forEach((button) => {
+      button.classList.toggle("active", button.dataset.category === currentCategory);
+    });
+  };
+
+  const updateActiveCategory = () => {
+    activeCategory.textContent = currentCategory;
+  };
+
+  const renderMenu = (category) => {
+    menuGrid.innerHTML = "";
+    const filtered =
+      category === "All"
+        ? menuItems
+        : menuItems.filter((item) => item.category === category);
+
+    filtered.forEach((item, index) => {
+      const card = document.createElement("article");
+      card.className = "menu-card";
+      card.style.setProperty("--order", index);
+
+      card.innerHTML = `
+        <img src="${item.image}" alt="${item.title}">
+        <div class="menu-card-content">
+          <div class="menu-card-header">
+            <h3 class="menu-title">${item.title}</h3>
+            <span class="menu-price">${item.price}</span>
+          </div>
+          <span class="menu-category">${item.category}</span>
+          <p class="menu-desc">${item.description}</p>
+        </div>
+      `;
+
+      menuGrid.appendChild(card);
+    });
+  };
+
+  const openMenu = () => {
+    sidebar.classList.add("open");
+    overlay.classList.add("show");
+    sidebar.setAttribute("aria-hidden", "false");
+    if (menuToggle) {
+      menuToggle.setAttribute("aria-expanded", "true");
     }
-  });
+  };
 
-  stopScan.addEventListener("click", stopScanner);
-
-  fileScan.addEventListener("change", async (event) => {
-    if (!("BarcodeDetector" in window)) {
-      setStatus("BarcodeDetector is not supported in this browser.");
-      return;
+  const closeMenu = () => {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+    sidebar.setAttribute("aria-hidden", "true");
+    if (menuToggle) {
+      menuToggle.setAttribute("aria-expanded", "false");
     }
+  };
 
-    const file = event.target.files[0];
+  if (menuToggle) {
+    menuToggle.addEventListener("click", openMenu);
+  }
 
-    if (!file) {
-      return;
-    }
+  if (categoryToggle) {
+    categoryToggle.addEventListener("click", openMenu);
+  }
 
-    let bitmap = null;
+  if (closeSidebar) {
+    closeSidebar.addEventListener("click", closeMenu);
+  }
 
-    try {
-      detector = new BarcodeDetector({ formats: ["qr_code"] });
-      bitmap = await createImageBitmap(file);
-      const codes = await detector.detect(bitmap);
+  if (overlay) {
+    overlay.addEventListener("click", closeMenu);
+  }
 
-      if (codes.length > 0) {
-        handleScan(codes[0].rawValue || "");
-      } else {
-        setStatus("No QR code found in the image.");
-        setResult("No code yet.");
-        setLink("");
-      }
-    } catch (err) {
-      setStatus("Image scan error: " + err.message);
-    } finally {
-      if (bitmap && bitmap.close) {
-        bitmap.close();
-      }
-    }
-  });
-
-  setMenuUrl(fallbackMenuUrl);
+  renderCategories();
+  renderMenu(currentCategory);
+  updateActiveCategory();
 })();

@@ -1,27 +1,62 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Recipe Menu</title>
+  <title>Nagomi-ya Sushi Menu</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
 </head>
-<body class="menu">
-  <main class="scroll-layout">
-    <section class="scroll-pages">
-      <img class="scroll-page" src="pdf/pages/page-1.png" alt="Menu page 1">
-      <img class="scroll-page" src="pdf/pages/page-2-left.png" alt="Menu page 2 left">
-      <img class="scroll-page" src="pdf/pages/page-2-right.png" alt="Menu page 2 right">
-      <img class="scroll-page" src="pdf/pages/page-3-left.png" alt="Menu page 3 left">
-      <img class="scroll-page" src="pdf/pages/page-3-right.png" alt="Menu page 3 right">
-      <img class="scroll-page" src="pdf/pages/page-4-left.png" alt="Menu page 4 left">
-      <img class="scroll-page" src="pdf/pages/page-4-right.png" alt="Menu page 4 right">
-      <img class="scroll-page" src="pdf/pages/page-5-left.png" alt="Menu page 5 left">
-      <img class="scroll-page" src="pdf/pages/page-5-right.png" alt="Menu page 5 right">
-      <img class="scroll-page" src="pdf/pages/page-6-left.png" alt="Menu page 6 left">
-      <img class="scroll-page" src="pdf/pages/page-6-right.png" alt="Menu page 6 right">
-      <img class="scroll-page" src="pdf/pages/page-7.png" alt="Menu page 7">
+<body class="menu-page">
+  <div class="page-texture"></div>
+
+  <header class="site-header">
+    <div class="logo-area">
+      <div class="logo-badge">
+        <img class="logo-image" src="logo.png" alt="Nagomi-ya Sushi logo">
+      </div>
+      <div class="logo-copy">
+        <p class="logo-title">Nagomi-ya</p>
+        <p class="logo-sub">Kyoto-inspired sushi bar</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="ghost-button" id="categoryToggle" type="button">Categories</button>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open category menu" aria-controls="categorySidebar" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <aside class="category-sidebar" id="categorySidebar" aria-hidden="true">
+    <div class="sidebar-header">
+      <div>
+        <p class="sidebar-title">Menu Categories</p>
+        <p class="sidebar-sub">Choose a section</p>
+      </div>
+      <button class="icon-button" id="closeSidebar" type="button" aria-label="Close categories">�</button>
+    </div>
+    <div class="category-list" id="categoryList"></div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <main class="menu-main">
+    <section class="menu-hero">
+      <div>
+        <p class="kicker">Nagomi-ya Sushi</p>
+        <h1>Handcrafted bites, seasonal cuts, and warm rice.</h1>
+        <p class="hero-sub">Select a category from the menu to filter the chef's picks.</p>
+      </div>
+      <div class="hero-status">
+        <span>Showing:</span>
+        <strong id="activeCategory">All</strong>
+      </div>
     </section>
+
+    <section class="menu-grid" id="menuGrid"></section>
   </main>
 </body>
 </html>
