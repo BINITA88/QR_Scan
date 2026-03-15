@@ -3,11 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nagomi-ya Sushi Menu</title>
+  <title>Nagomi-ya Sushi Menu (PDF)</title>
   <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
 </head>
-<body class="menu-page">
+<body class="menu">
+  <main class="layout pdf-layout">
+    <section class="pdf-card">
+      <object class="pdf-frame" data="pdf/menu-final.pdf#toolbar=0&navpanes=0&scrollbar=0&view=FitH" type="application/pdf">
+        <p>Your browser does not support PDF viewing. <a href="pdf/menu-final.pdf">Open the menu PDF</a>.</p>
+      </object>
+    </section>
+  </main>
+
+  <!--
+  Original interactive menu UI kept for later use.
   <div class="page-texture"></div>
 
   <header class="site-header">
@@ -58,5 +68,6 @@
 
     <section class="menu-grid" id="menuGrid"></section>
   </main>
+  -->
 </body>
 </html>
