@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/", "destination": "/pdf/menu-final.pdf", "permanent": false },
+    { "source": "/index.html", "destination": "/pdf/menu-final.pdf", "permanent": false }
+  ]
+}
